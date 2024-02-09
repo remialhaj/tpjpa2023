@@ -47,6 +47,11 @@ public class JpaTest {
 			user2.setUsername("user2");
 			manager.persist(user2);
 
+			Admin admin1 = new Admin();
+			admin1.setUsername("admin1");
+			admin1.setRole("Administrator");
+			manager.persist(admin1);
+
 			Tag tag1 = new Tag();
 			tag1.setName("Bug");
 			manager.persist(tag1);
