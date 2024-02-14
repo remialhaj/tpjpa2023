@@ -2,6 +2,7 @@ package jpa;
 
 import jakarta.persistence.*;
 @Entity
+@Table(name = "USER")
 public class User {
     @Id
     @GeneratedValue

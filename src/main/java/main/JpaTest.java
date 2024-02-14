@@ -1,18 +1,26 @@
-package jpa;
+package main;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
-import java.util.Date;
-import java.util.List;
+import dao.*;
+import jakarta.persistence.*;
+import jpa.*;
+import java.util.*;
 
 public class JpaTest {
 
 	private EntityManager manager;
+	private UserDao userDao; // Ajoutez cette déclaration
+	private AdminDao adminDao; // Ajoutez cette déclaration
+	private TicketDao ticketDao;
+	private CommentDao commentDao;
+	private TagDao tagDao;
 
 	public JpaTest(EntityManager manager) {
 		this.manager = manager;
+		this.userDao = new UserDao(); // Instanciez le UserDao
+		this.adminDao = new AdminDao(); // Instanciez l'AdminDao
+		this.ticketDao = new TicketDao();
+		this.commentDao = new CommentDao();
+		this.tagDao = new TagDao();
 	}
 
 	public static void main(String[] args) {
@@ -25,6 +33,7 @@ public class JpaTest {
 		tx.begin();
 		try {
 			test.createTickets();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -39,26 +48,35 @@ public class JpaTest {
 	private void createTickets() {
 		int numOfTickets = manager.createQuery("Select t From Ticket t", Ticket.class).getResultList().size();
 		if (numOfTickets == 0) {
+
+			Admin admin = new Admin();
+			admin.setUsername("john_doe");
+			admin.setRole("Administrator");
+			admin.setEmail("john.doe@example.com");
+			admin.setPassword("password123");
+
 			User user1 = new User();
 			user1.setUsername("user1");
-			manager.persist(user1);
+			user1.setEmail("user1@example.com");
+			user1.setPassword("password1");
 
 			User user2 = new User();
 			user2.setUsername("user2");
-			manager.persist(user2);
+			user2.setEmail("user2@example.com");
+			user2.setPassword("password2");
 
-			Admin admin1 = new Admin();
-			admin1.setUsername("admin1");
-			admin1.setRole("Administrator");
-			manager.persist(admin1);
+			// Utilisez le DAO pour sauvegarder l'utilisateur
+			adminDao.save(admin);
+			userDao.save(user1);
+			userDao.save(user2);
 
 			Tag tag1 = new Tag();
 			tag1.setName("Bug");
-			manager.persist(tag1);
+			tagDao.save(tag1);
 
 			Tag tag2 = new Tag();
 			tag2.setName("Feature Request");
-			manager.persist(tag2);
+			tagDao.save(tag2);
 
 			Ticket ticket1 = new Ticket();
 			ticket1.setTitle("Issue 1");
@@ -67,14 +85,14 @@ public class JpaTest {
 			ticket1.setCreatedBy(user1);
 			ticket1.setAssignedTo(user2);
 			ticket1.getTags().add(tag1);
-			manager.persist(ticket1);
+			ticketDao.save(ticket1);
 
 			Comment comment1 = new Comment();
 			comment1.setContent("This is a comment about issue 1");
 			comment1.setCreatedBy(user2);
 			comment1.setCreatedDate(new Date());
 			comment1.setTicket(ticket1);
-			manager.persist(comment1);
+			commentDao.save(comment1);
 
 			Ticket ticket2 = new Ticket();
 			ticket2.setTitle("Issue 2");
@@ -83,7 +101,7 @@ public class JpaTest {
 			ticket2.setCreatedBy(user2);
 			ticket2.setAssignedTo(user1);
 			ticket2.getTags().add(tag2);
-			manager.persist(ticket2);
+			ticketDao.save(ticket2);
 		}
 	}
 
