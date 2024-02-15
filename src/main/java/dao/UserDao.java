@@ -5,6 +5,8 @@ import jakarta.persistence.EntityTransaction;
 import main.EntityManagerHelper;
 import jpa.User;
 
+import java.util.List;
+
 public class UserDao implements GenericDao<User, String > {
     @Override
     public User save(User user) {
@@ -54,6 +56,10 @@ public class UserDao implements GenericDao<User, String > {
             }
             throw e; // Propagation de l'exception
         }
+    }
+
+    public List<User> getAllUsers() {
+        return EntityManagerHelper.getEntityManager().createQuery("SELECT u FROM User u", User.class).getResultList();
     }
 
 }
