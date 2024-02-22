@@ -3,6 +3,8 @@ package jpa;
 import jakarta.persistence.*;
 @Entity
 @Table(name = "USER")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorValue("USER")
 public class User {
     @Id
     @GeneratedValue

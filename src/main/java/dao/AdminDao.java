@@ -2,10 +2,12 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.criteria.*;
 import main.EntityManagerHelper;
 import jpa.Admin;
 
 import java.util.List;
+
 
 public class AdminDao implements GenericDao<Admin, String > {
     @Override
@@ -62,5 +64,20 @@ public class AdminDao implements GenericDao<Admin, String > {
         return EntityManagerHelper.getEntityManager().createQuery("SELECT a FROM Admin a WHERE a.role = :role", Admin.class)
                 .setParameter("role", role)
                 .getResultList();
+    }
+
+    public List<Admin> getAlls(String role) {
+        CriteriaBuilder criteriaBuilder = EntityManagerHelper.getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Admin> query = criteriaBuilder.createQuery(Admin.class);
+        Root<Admin> root = query.from(Admin.class);
+
+        // Définir les conditions de filtrage
+        Predicate condition = criteriaBuilder.equal(root.get("role"), role);
+
+        // Ajouter la condition à la requête
+        query.where(condition);
+
+        // Exécuter la requête et retourner les résultats
+        return EntityManagerHelper.getEntityManager().createQuery(query).getResultList();
     }
 }

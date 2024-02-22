@@ -33,7 +33,18 @@ public class JpaTest {
 		tx.begin();
 		try {
 			test.createTickets();
+			List<Admin> admins = test.adminDao.getAll("Administrator");
+			System.out.println("1Admins with role Administrator:");
+			for (Admin admin : admins) {
+				System.out.println("Username: " + admin.getUsername() + ", Role: " + admin.getRole());
+			}
 
+			// Appeler la méthode getAlls de AdminDao
+			List<Admin> adminsFiltered = test.adminDao.getAlls("Administrator");
+			System.out.println("2Admins with role Administrator:");
+			for (Admin admin : adminsFiltered) {
+				System.out.println("Username: " + admin.getUsername() + ", Role: " + admin.getRole());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,6 +65,14 @@ public class JpaTest {
 			admin.setRole("Administrator");
 			admin.setEmail("john.doe@example.com");
 			admin.setPassword("password123");
+			adminDao.save(admin);
+
+			Admin admin2 = new Admin();
+			admin2.setUsername("jane_doe");
+			admin2.setRole("Administrator");
+			admin2.setEmail("s@gmail.com");
+			admin2.setPassword("password123");
+			adminDao.save(admin2);
 
 			User user1 = new User();
 			user1.setUsername("user1");
@@ -66,7 +85,7 @@ public class JpaTest {
 			user2.setPassword("password2");
 
 			// Utilisez le DAO pour sauvegarder l'utilisateur
-			adminDao.save(admin);
+
 			userDao.save(user1);
 			userDao.save(user2);
 
@@ -102,6 +121,8 @@ public class JpaTest {
 			ticket2.setAssignedTo(user1);
 			ticket2.getTags().add(tag2);
 			ticketDao.save(ticket2);
+
+
 		}
 	}
 
